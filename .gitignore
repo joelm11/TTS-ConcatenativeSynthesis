@@ -1,7 +1,8 @@
 .venv/
+.vscode/
 
 docs/
+tmp/
 
 datasets/*
-
 !datasets/readme.md
