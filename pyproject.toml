@@ -1,6 +1,6 @@
 [build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["uv_build>=0.12,<0.13"]
+build-backend = "uv_build"
 
 [project]
 name = "concatenative-synthesis"
@@ -13,6 +13,3 @@ dependencies = [
     "pandas",
     "pyarrow",
 ]
-
-[tool.setuptools.packages.find]
-where = ["."]

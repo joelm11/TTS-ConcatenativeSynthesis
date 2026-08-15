@@ -2,9 +2,10 @@ from pathlib import Path
 
 import pandas as pd
 
+from ..data import gather_data_files
 from .acoustic import _get_acoustic_feats
 from .phoneme import PHONEME_PHONETIC_FEATURES, get_phoneme_feats, phonemes_from_lab
-from ..data import gather_data_files
+
 
 def _build_features(raw_data_triplet):
     phonemes = phonemes_from_lab(raw_data_triplet["ph"])
