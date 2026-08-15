@@ -1,20 +1,20 @@
-# All the commands to scaffold and run the project
+# All the commands to scaffold and run the project using uv
 
 .PHONY: install data-raw features clean
 
-# Install the package in editable mode
+# Install the package and dependencies in a virtual environment
 install:
-	pip install -e .
+	uv sync
 
 # Download data without processing
 data-raw:
-	python -m concatenative_synthesis.data
+	uv run python -m concatenative_synthesis.data
 
 # Calculate features from data
 features:
-	python -m concatenative_synthesis.features.extract
+	uv run python -m concatenative_synthesis.features.extract
 
-# Clean up generated files
+# Clean up generated files and venv
 clean:
 	rm -rf data/features/
 	rm -rf *.egg-info/

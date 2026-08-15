@@ -1,6 +1,9 @@
 .venv/
 .vscode/
 
+# Build artifacts
+*.egg-info/
+
 docs/
 tmp/
 
