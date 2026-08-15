@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 from pathlib import Path
 
 # Vocabulary lists for categorical fields
@@ -96,12 +95,14 @@ PHONEME_PHONETIC_FEATURES = {
     "y": {"is_vowel": 0, "is_voiced": 1, "manner": "glide", "place": "palatal"},
 }
 
+
 def phonemes_from_lab(lab_file: Path):
+    """Extracts per phoneme data for all phonemes in a label file."""
     def proc_line(line):
-        t_end, _, ph = line.strip().split(' ')
+        t_end, _, ph = line.strip().split(" ")
         return float(t_end), ph
 
-    file_stem = Path(lab_file).stem
+    file_stem = lab_file.stem
     phonemes = []
     with open(lab_file, "r", encoding="utf-8") as ph_src:
         lines = ph_src.readlines()
@@ -110,14 +111,18 @@ def phonemes_from_lab(lab_file: Path):
             t_end_pph, pph = proc_line(lines[i - 1])
             _, nph = proc_line(lines[i + 1])
             idx = len(phonemes)
-            phonemes.append({'id'   : f'{file_stem}_{idx:04d}',
-                             'ph'   : cph, 
-                             'nph'  : nph,
-                             'pph'  : pph,
-                             'start': t_end_pph,
-                             'dur'  : t_end_cph - t_end_pph})
+            phonemes.append(
+                {
+                    "lab_file": file_stem,
+                    "ph_idx": idx,
+                    "ph": cph,
+                    "nph": nph,
+                    "pph": pph,
+                    "start": t_end_pph,
+                    "dur": t_end_cph - t_end_pph,
+                }
+            )
     return phonemes
 
-
-if __name__ == "__main__":
-    print("sup fool")
+def get_phoneme_feats(phoneme):
+    return PHONEME_PHONETIC_FEATURES[phoneme]
