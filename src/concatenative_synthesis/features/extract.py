@@ -38,8 +38,7 @@ def build_features(raw_data_files, output_dir: Path, batch_size=100):
 
         # Write out features
         df = pd.DataFrame(features)
-        df.to_feather(output_dir)
-
+        df.to_parquet(output_dir, engine='pyarrow', compression='snappy', index=True)
 
 def build_database(output_dir, num_train):
     """Builds the phoneme database from available data and returns the partition to be used for training."""
@@ -53,5 +52,5 @@ def build_database(output_dir, num_train):
 
 
 if __name__ == "__main__":
-    DATABASE_DIR = Path.cwd() / "data" / "features" / "phoneme_unit_db.feather"
+    DATABASE_DIR = Path.cwd() / "data" / "features" / "phoneme_unit_db.parquet"
     build_database(DATABASE_DIR, 200)
