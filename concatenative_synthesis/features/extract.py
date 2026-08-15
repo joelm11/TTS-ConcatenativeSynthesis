@@ -1,4 +1,10 @@
-import phoneme
+from pathlib import Path
+
+import pandas as pd
+
+from .acoustic import _get_acoustic_feats
+from .phoneme import PHONEME_PHONETIC_FEATURES, get_phoneme_feats, phonemes_from_lab
+from ..data import gather_data_files
 
 def _build_features(raw_data_triplet):
     phonemes = phonemes_from_lab(raw_data_triplet["ph"])
@@ -11,7 +17,7 @@ def _build_features(raw_data_triplet):
     # - Calculate the log pitch from the pitch mark file and start/duration
     features = []
     for phone in phonemes:
-        ph_feats = _get_phoneme_feats(phone["ph"])
+        ph_feats = get_phoneme_feats(phone["ph"])
         acu_feats = _get_acoustic_feats(
             phone, raw_data_triplet["wav"], raw_data_triplet["pm"]
         )
