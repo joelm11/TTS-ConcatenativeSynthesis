@@ -4,7 +4,7 @@ import pandas as pd
 
 from ..data import gather_data_files
 from .acoustic import _get_acoustic_feats
-from .phoneme import PHONEME_PHONETIC_FEATURES, get_phoneme_feats, phonemes_from_lab
+from .phoneme import get_phoneme_feats, phonemes_from_lab
 
 
 def _build_features(raw_data_triplet):
@@ -22,23 +22,21 @@ def _build_features(raw_data_triplet):
         acu_feats = _get_acoustic_feats(
             phone, raw_data_triplet["wav"], raw_data_triplet["pm"]
         )
-        features.append(ph_feats | PHONEME_PHONETIC_FEATURES[phone["ph"]] | acu_feats)
+        feature = phone | ph_feats | acu_feats
+        features.append(feature)
 
     return features
 
 
-def build_features(raw_data_files, output_dir: Path, batch_size=100):
-    """Calculate features from files in batches and write them out."""
+def build_features(raw_data_files, output_path: Path):
+    """Calculate features from all files and write them to a single parquet file."""
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    features = []
+    for triplet in raw_data_files:
+        features.extend(_build_features(triplet))
 
-    for i in range(0, len(raw_data_files), batch_size):
-        chunk = raw_data_files[i : i + batch_size]
-        features = []
-        for triplet in chunk:
-            features.append(_build_features(triplet))
-
-        # Write out features
-        df = pd.DataFrame(features)
-        df.to_parquet(output_dir, engine='pyarrow', compression='snappy', index=True)
+    df = pd.DataFrame(features)
+    df.to_parquet(output_path, engine='pyarrow', compression='snappy', index=True)
 
 def build_database(output_dir, num_train):
     """Builds the phoneme database from available data and returns the partition to be used for training."""
@@ -52,5 +50,5 @@ def build_database(output_dir, num_train):
 
 
 if __name__ == "__main__":
-    DATABASE_DIR = Path.cwd() / "data" / "features" / "phoneme_unit_db.parquet"
-    build_database(DATABASE_DIR, 200)
+    DATABASE_PATH = Path.cwd() / "data" / "features" / "phoneme_unit_db.parquet"
+    build_database(DATABASE_PATH, 200)
