@@ -10,9 +10,13 @@ install:
 data-raw:
 	uv run python -m concatenative_synthesis.data
 
-# Calculate features from data
+# Extract features
 features:
 	uv run python -m concatenative_synthesis.features.extract
+
+# Extract features and learn weights from data
+weights:
+	uv -v run python -m concatenative_synthesis.training
 
 # Clean up generated files and venv
 clean:

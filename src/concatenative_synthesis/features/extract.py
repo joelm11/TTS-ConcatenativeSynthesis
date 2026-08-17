@@ -7,9 +7,7 @@ from .acoustic import _get_acoustic_feats
 from .phoneme import get_phoneme_feats, phonemes_from_lab
 
 
-def _build_features(raw_data_triplet):
-    phonemes = phonemes_from_lab(raw_data_triplet["ph"])
-
+def features_from_triplet(raw_data_triplet):
     # For each phoneme:
     # Format categorical features
     # Calculate acoustic features:
@@ -17,6 +15,7 @@ def _build_features(raw_data_triplet):
     # - Calculate log power over its duration
     # - Calculate the log pitch from the pitch mark file and start/duration
     features = []
+    phonemes = phonemes_from_lab(raw_data_triplet["ph"])
     for phone in phonemes:
         ph_feats = get_phoneme_feats(phone["ph"])
         acu_feats = _get_acoustic_feats(
@@ -33,7 +32,7 @@ def build_features(raw_data_files, output_path: Path):
     output_path.parent.mkdir(parents=True, exist_ok=True)
     features = []
     for triplet in raw_data_files:
-        features.extend(_build_features(triplet))
+        features.extend(features_from_triplet(triplet))
 
     df = pd.DataFrame(features)
     df.to_parquet(output_path, engine='pyarrow', compression='snappy', index=True)
