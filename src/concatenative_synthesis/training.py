@@ -86,7 +86,7 @@ def train_weights(training_triplets, synthesis_db: Path):
 
     return w
 
-if __name__ == "main":
+if __name__ == "__main__":
     start = time.perf_counter()
 
     DATABASE_PATH = Path.cwd() / "data" / "features" / "phoneme_unit_db.parquet"

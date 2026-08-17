@@ -17,11 +17,10 @@ def features_from_triplet(raw_data_triplet):
     features = []
     phonemes = phonemes_from_lab(raw_data_triplet["ph"])
     for phone in phonemes:
-        ph_feats = get_phoneme_feats(phone["ph"])
         acu_feats = _get_acoustic_feats(
             phone, raw_data_triplet["wav"], raw_data_triplet["pm"]
         )
-        feature = phone | ph_feats | acu_feats
+        feature = phone | acu_feats
         features.append(feature)
 
     return features

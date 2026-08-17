@@ -16,7 +16,7 @@ features:
 
 # Extract features and learn weights from data
 weights:
-	uv -v run python -m concatenative_synthesis.training
+	uv run python -m concatenative_synthesis.training
 
 # Clean up generated files and venv
 clean:
