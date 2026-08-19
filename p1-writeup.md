@@ -48,8 +48,39 @@ Where $S$ is silence.
 
 ## Training
 
-## Model
+Training the weights for synthesis is done via multiple linear regression. Data held back from the unit synthesis database is used as target phoneme sequences to train against. For each phoneme in the target sequence, we find its $N$ best acoustic matches via MFCC distance. We then compute the target subcosts between the target phoneme and its $N$ best matches. Finally, we use a multiple linear regression to predict the objective distance by weighting the calculated sub-costs.
+
+### Training Implementation
+
+I'd never implemented multiple linear regression before, and I was batching this one to boot. Here's how I went about implementing it.
+
+As we're processing phonemes in batches ($TargetSequenceLength \times N \times p$ is large) we accumulate sufficient statistics (I know nothing about sufficient statistics) for the regression as we iterate through sequences and their constituting phonemes.
+
+$$\mathbf{A} = \sum_{\text{batch}} \mathbf{X}_{\text{batch}}^T \mathbf{X}_{\text{batch}} \quad \text{and} \quad \mathbf{b} = \sum_{\text{batch}} \mathbf{X}_{\text{batch}}^T \mathbf{Y}_{\text{batch}}$$
+
+After the entire training set has been accumulated, the weight vector is then calculated.
+
+$$\mathbf{w}^t = \mathbf{A}^{-1} \mathbf{b}$$
+
+### Limitations in Training (and Synthesis)
+
+As initially alluded to in the intro of this piece, classical algorithmic approaches require rich pre-processing of input data. During training this rich data is available to us as we have both the labelled and acoustic speech data. During synthesis however, we have only label data. 
+
+Modelling acoustic data from raw string data is complex and vastly outside the scope of this project for myself. We solely possess text from which to guess at the best matching units in the database. Needless to say that later our results - while correct - were not perceptually impressive.
 
 ## Synthesis
 
-## Evals
+For synthesis I used a plain concatenative system. The best phonemes were determined via search, then spliced together from their source audio. Better results could be achieved with a TDPSOLA vocoder I believe. Synthesis suffered from the aforementioned synthesis limitation - no acoustic nor prosodic information for the target sequence.
+
+## Results
+
+My main takeaway from this is that classical methods require a rich frontend for text processing. It was fun to try some hands-on data science though: downloading and processing raw data, pulling out useful features for training.
+
+It will be interesting applying deep learning methods to this problem in the future. 
+
+Relevant applications I could think of were:
+- Learning an embedding space for characters based on their pre/proceeding characters
+- Learning waveform synthesis from some learned feature representation
+
+Given the vast amount of data available for this problem, deep learning seems 
+especially applicable here.
